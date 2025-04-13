@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');  
 const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/userRepository');
 
@@ -10,7 +10,7 @@ const registerUser = async (userData) => {
     throw new Error('User already exists');
   }
 
-  // Hash password
+  // Hash password using bcryptjs
   const hashedPassword = await bcrypt.hash(userData.password, 10);
 
   // Create new user
@@ -47,7 +47,7 @@ const loginUser = async (email, password) => {
     throw new Error('Invalid credentials');
   }
 
-  // Compare password
+  // Compare password using bcryptjs
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
     throw new Error('Invalid credentials');
