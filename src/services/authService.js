@@ -1,4 +1,5 @@
-const bcrypt = require('bcryptjs');  
+// user-service/src/services/authService.js
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/userRepository');
 
@@ -10,19 +11,19 @@ const registerUser = async (userData) => {
     throw new Error('User already exists');
   }
 
+  // If no password (Google login), skip hashing
+  if (!userData.password) {
+    const user = await userRepository.createUser(userData);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return { user, token };
+  }
+
   // Hash password using bcryptjs
   const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-  // Create new user
-  const user = await userRepository.createUser({
-    ...userData,
-    password: hashedPassword,
-  });
-
-  // Generate JWT token
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-    expiresIn: '1h',
-  });
+  // Create new user with hashed password
+  const user = await userRepository.createUser({ ...userData, password: hashedPassword });
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   return { user, token };
 };
@@ -34,9 +35,8 @@ const updateUserProfile = async (userId, updatedData) => {
     updatedData.password = await bcrypt.hash(updatedData.password, 10);
   }
 
-  // Update user profile
+  // Update user profile, including addresses
   const updatedUser = await userRepository.updateUserProfile(userId, updatedData);
-
   return updatedUser;
 };
 
@@ -54,9 +54,7 @@ const loginUser = async (email, password) => {
   }
 
   // Generate JWT token
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-    expiresIn: '1h',
-  });
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   return { user, token };
 };

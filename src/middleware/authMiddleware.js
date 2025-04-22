@@ -15,6 +15,11 @@ const authMiddleware = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // Add the user info from the token to the request object
 
+    const email = decoded.email;
+    if (!email.endsWith('@gmail.com')) {
+      return res.status(400).json({ message: 'Please use a Gmail account to log in' });
+    }
+    
     next(); // Call the next middleware or route handler
   } catch (error) {
     // If the token is invalid or expired, return an error message
