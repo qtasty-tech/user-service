@@ -19,7 +19,7 @@ app.get('/api/protected', authMiddleware, (req, res) => {
   res.json({ message: 'You have access to this protected route!', user: req.user });
 });
 
-// MongoDB connection/////////
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URL)
   .then(() => {
     console.log('MongoDB connected');
