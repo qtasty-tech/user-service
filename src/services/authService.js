@@ -13,7 +13,7 @@ const registerUser = async (userData) => {
   // Hash password using bcryptjs
   const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-  // Create new user
+  // Create new user with address
   const user = await userRepository.createUser({
     ...userData,
     password: hashedPassword,
@@ -27,6 +27,7 @@ const registerUser = async (userData) => {
   return { user, token };
 };
 
+
 // Update user profile
 const updateUserProfile = async (userId, updatedData) => {
   // Hash password if it's being updated
@@ -34,11 +35,12 @@ const updateUserProfile = async (userId, updatedData) => {
     updatedData.password = await bcrypt.hash(updatedData.password, 10);
   }
 
-  // Update user profile
+  // Update user profile with address
   const updatedUser = await userRepository.updateUserProfile(userId, updatedData);
 
   return updatedUser;
 };
+
 
 // Login user
 const loginUser = async (email, password) => {

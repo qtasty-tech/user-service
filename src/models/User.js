@@ -1,4 +1,3 @@
-// models/User.js
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
@@ -30,6 +29,14 @@ const UserSchema = new mongoose.Schema({
     type: Boolean, 
     default: false 
   },
+  address: { 
+    type: {
+      formatted_address: { type: String },
+      latitude: { type: Number },
+      longitude: { type: Number }
+    },
+    required: false 
+  }
 });
 
 const User = mongoose.model('User', UserSchema);

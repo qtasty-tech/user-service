@@ -3,13 +3,14 @@ const authService = require('../services/authService');
 // Register a new user
 const register = async (req, res) => {
   try {
-    const { name, email, password, phone, role } = req.body;
+    const { name, email, password, phone, role, address } = req.body;
     const { user, token } = await authService.registerUser({
       name,
       email,
       password,
       phone,
       role,
+      address,
     });
 
     res.status(201).json({
@@ -22,11 +23,12 @@ const register = async (req, res) => {
   }
 };
 
+
 // Update User Profile
 const updateProfile = async (req, res) => {
   try {
     const userId = req.user.userId; // From JWT
-    const { name, email, phone, role } = req.body;
+    const { name, email, phone, role, address } = req.body;
 
     // Update profile using the service
     const updatedUser = await authService.updateUserProfile(userId, {
@@ -34,6 +36,7 @@ const updateProfile = async (req, res) => {
       email,
       phone,
       role,
+      address,
     });
 
     res.status(200).json({
