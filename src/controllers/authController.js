@@ -1,35 +1,32 @@
-// user-service/src/controllers/authController.js
 const authService = require('../services/authService');
 
-// Register a new user (Google or regular)
+// Register a new user
 const register = async (req, res) => {
   try {
-    const { name, email, password, phone, role, googleId, addresses } = req.body;
+    const { name, email, password, phone, role } = req.body;
+    const { user, token } = await authService.registerUser({
+      name,
+      email,
+      password,
+      phone,
+      role,
+    });
 
-    // Check if user already exists via email or Google ID
-    let existingUser = await authService.getUserByEmail(email);
-    if (!googleId && existingUser) {
-      throw new Error('User already exists');
-    }
-
-    // If Google login, create user with googleId, no password needed
-    const userData = googleId 
-      ? { googleId, name, email, role, addresses }  
-      : { name, email, password, phone, role, addresses };  
-
-    const { user, token } = await authService.registerUser(userData);
-
-    res.status(201).json({ message: 'User created successfully', user, token });
+    res.status(201).json({
+      message: 'User created successfully',
+      user,
+      token,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-// Update User Profile (Including Address)
+// Update User Profile
 const updateProfile = async (req, res) => {
   try {
     const userId = req.user.userId; // From JWT
-    const { name, email, phone, role, addresses } = req.body;  
+    const { name, email, phone, role } = req.body;
 
     // Update profile using the service
     const updatedUser = await authService.updateUserProfile(userId, {
@@ -37,7 +34,6 @@ const updateProfile = async (req, res) => {
       email,
       phone,
       role,
-      addresses,  // Updating the addresses here
     });
 
     res.status(200).json({
@@ -55,7 +51,7 @@ const deleteAccount = async (req, res) => {
     const userId = req.user.userId;
 
     // Delete user using the service
-    await authService.deleteUserAccount(userId);
+    await userRepository.deleteUserAccount(userId);
 
     res.status(200).json({ message: 'Account deleted successfully' });
   } catch (error) {
