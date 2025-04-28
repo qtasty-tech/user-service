@@ -1,4 +1,5 @@
 const authService = require('../services/authService');
+const userRepository = require('../repositories/userRepository');
 
 // Register a new user
 const register = async (req, res) => {
@@ -76,11 +77,34 @@ const login = async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
+  
 };
+
+// Get user by ID
+const getUserById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await userRepository.getUserById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 
 module.exports = {
   register,
   updateProfile,
   deleteAccount,
   login,
+  getUserById
 };

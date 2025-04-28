@@ -16,4 +16,7 @@ router.put('/profile', authMiddleware, authController.updateProfile);
 // Delete account route (protected)
 router.delete('/profile', authMiddleware, authController.deleteAccount);
 
+// Get user by ID (protected)
+router.get('/:userId', authMiddleware, authController.getUserById);
+
 module.exports = router;

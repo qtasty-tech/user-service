@@ -5,6 +5,12 @@ const getUserByEmail = async (email) => {
   return await User.findOne({ email });
 };
 
+// Get user by ID
+const getUserById = async (userId) => {
+  return await User.findById(userId);
+};
+
+
 // Create a new user
 const createUser = async (userData) => {
   const user = new User(userData);
@@ -27,4 +33,5 @@ module.exports = {
   createUser,
   updateUserProfile,
   deleteUserAccount,
+  getUserById
 };
